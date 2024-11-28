@@ -1,22 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Student.Api.Data;
 
 namespace Student.Api {
     public class StudentController: ControllerBase
-    { private static List<Student> studentList = new List<Student>
+    {
+         private readonly DataContext _dataContext;  
+
+        public StudentController(DataContext dataContext)
         {
-            new Student { Name = "John Doe", Address = "123 Main St" },
-            new Student { Name = "Jane Smith", Address = "456 Elm St" },
-            new Student { Name = "Emily Johnson", Address = "789 Oak St" }
-        };
-        
+            _dataContext = dataContext;
+        }
+
         [HttpGet("GetStudentList")]
         public IActionResult GetStudentList(){
-            return Ok("studentList");// with 200 status code
+            var studentList = _dataContext.Students.ToList();
+            return Ok(studentList);// with 200 status code
         }
 
         [HttpPost("CreateStudent")]
         public IActionResult CreateStudent(Student student){
-            return Ok(student);// with 200 status code
+            _dataContext.Students.Add(student);
+            _dataContext.SaveChanges();
+            return Ok(student);
         }
     }
 }
