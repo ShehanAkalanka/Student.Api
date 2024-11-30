@@ -1,15 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Student.Api.Data
-{
-    // this class responsible for connecting our models with our Database
-    public class DataContext : DbContext
-    {
-        public DataContext(DbContextOptions options) : base(options)
-        {
+namespace Student.Api.Data{
+    public class DataContext: DbContext{
+        public DataContext(DbContextOptions options):base(options){
+
         }
+        public DbSet<Student> Students {get;set;}
+        public DbSet<Teacher> Teachers {get;set;}
+        public DbSet<Classroom> Classrooms {get;set;}
+        public DbSet<Subject> Subjects {get;set;}
+        public DbSet<TeacherClassroom> TeacherClassrooms {get;set;}
+        public DbSet<TeacherSubject> TeacherSubjects {get;set;}
 
-        public DbSet<Student> Students { get; set; }
+        //here I'm overriding the OnModelCreating method in the DbContext base class
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TeacherClassroom>()
+            .HasKey(tc => new{tc.TeacherId, tc.ClassroomId});
+
+            modelBuilder.Entity<TeacherSubject>()
+            .HasKey(ts=> new {ts.TeacherId, ts.SubjectId});
+        }
     }
-
 }
