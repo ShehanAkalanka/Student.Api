@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Student.Api.Data;
+using Student.Api.Data.Dto;
 
 namespace Student.Api {
     public class StudentController: ControllerBase
     {
-         private readonly DataContext _dataContext;  
+        private readonly DataContext _dataContext;  
 
         public StudentController(DataContext dataContext)
         {
@@ -19,8 +19,23 @@ namespace Student.Api {
         }
 
         [HttpPost("CreateStudent")]
-        public IActionResult CreateStudent(Student student){
-            _dataContext.Students.Add(student);
+        public IActionResult CreateStudent(StudentDto student){
+
+            if(!ModelState.IsValid){
+                return BadRequest(ModelState);
+            }
+
+            Student req = new Student{
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                ContactPerson = student.ContactPerson,
+                ContactNo = student.ContactNo,
+                EmailAddress = student.EmailAddress,
+                DateOfBirth = student.DateOfBirth,
+                ClassroomId = student.ClassroomId
+            };
+
+            _dataContext.Students.Add(req);
             _dataContext.SaveChanges();
             return Ok(student);
         }
