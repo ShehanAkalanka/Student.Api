@@ -12,6 +12,15 @@ namespace Student.Api {
             _dataContext = dataContext;
         }
 
+        /* get user data by user id -- here I only get the data 
+        from student entity I'm not considering getting 
+        the classroom data or teacher data or subject data related to student*/
+        [HttpGet("GetStudentLDataById")]
+        public IActionResult GetStudentList(int id){
+            var studentList = _dataContext.Students.Where(s=>s.StudentId ==id).FirstOrDefault();
+            return Ok(studentList);
+        }
+
         [HttpGet("GetStudentList")]
         public IActionResult GetStudentList(){
             var studentList = _dataContext.Students.ToList();
