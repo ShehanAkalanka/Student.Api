@@ -18,7 +18,7 @@ namespace Student.Api.Data{
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<TeacherClassroom>()
-            .HasKey(tc => new{tc.TeacherId, tc.ClassroomId});
+            .HasKey(tc => new{tc.TeacherId, tc.ClassroomId}); // this is a constraint that ensures no duplicate values are added with these key value pair
 
             modelBuilder.Entity<TeacherSubject>()
             .HasKey(ts=> new {ts.TeacherId, ts.SubjectId});
