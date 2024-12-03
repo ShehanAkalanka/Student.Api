@@ -30,19 +30,6 @@ namespace Student.Api.Data.Dto{
         [DataType(DataType.Date)] // Specifies this field as a date
         public DateTime DateOfBirth { get; set; } // Date of birth *
 
-        [NotMapped] // This property won't be stored in the database
-        public int Age
-        {
-            get
-            {
-                // Automatically calculate the age based on DOB
-                var today = DateTime.Today;
-                var age = today.Year - DateOfBirth.Year;
-                if (DateOfBirth.Date > today.AddYears(-age)) age--;
-                return age;
-            }
-        }
-
         [Required]
         public int ClassroomId { get; set; } // Foreign key for Classroom
     }
