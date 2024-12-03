@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Student.Api.Data;
 using Student.Api.Data.Dto;
 
@@ -22,8 +23,8 @@ namespace Student.Api {
         }
 
         [HttpGet("GetStudentList")]
-        public IActionResult GetStudentList(){
-            var studentList = _dataContext.Students.ToList();
+        public async Task<IActionResult> GetStudentList(){
+            var studentList =await _dataContext.Students.ToListAsync();
             return Ok(studentList);// with 200 status code
         }
 
@@ -47,6 +48,43 @@ namespace Student.Api {
             _dataContext.Students.Add(req);
             _dataContext.SaveChanges();
             return Ok(student);
+            
+        }
+
+        [HttpGet("updateStudentDetails")]
+        public IActionResult updateStudentDetails(int s_id, StudentDto studentDto){
+            var studentList = _dataContext.Students.ToList();
+            return Ok(studentList);// with 200 status code
+        }
+
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateStudent([FromRoute] int id, StudentDto studentRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var student = _dataContext.Students.FirstOrDefault(i => i.StudentId == id);
+
+            if (student == null)
+            {
+                return NotFound(new { message = $"Student with ID {id} not found." });
+            }
+
+
+            student.FirstName = !string.IsNullOrEmpty(studentRequest.FirstName)?studentRequest.FirstName:student.FirstName;
+            student.LastName = studentRequest.LastName;
+            student.ContactPerson = studentRequest.ContactPerson;
+            student.ContactNo = studentRequest.ContactNo;
+            student.EmailAddress = studentRequest.EmailAddress;
+            student.DateOfBirth = studentRequest.DateOfBirth;
+            student.ClassroomId = studentRequest.ClassroomId;
+
+            _dataContext.SaveChanges();
+
+            return CreatedAtAction(nameof(GetStudentList), new { id = student.StudentId }, student);
         }
     }
 }
