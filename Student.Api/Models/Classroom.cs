@@ -13,6 +13,8 @@ namespace Student.Api {
         public string ClassroomName { get; set; } 
 
         public ICollection<Student> Students { get; set; }
+
+        public ICollection<TeacherClassroom> TeacherClassrooms { get; set; }
     }
     
 }
