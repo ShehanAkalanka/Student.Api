@@ -24,5 +24,6 @@ namespace Student.Api {
         public string EmailAddress { get; set; } // Email Address *
 
         public ICollection<TeacherSubject> TeacherSubjects {get; set;}
+        public ICollection<TeacherClassroom> TeacherClassrooms {get; set;}
     }
 }

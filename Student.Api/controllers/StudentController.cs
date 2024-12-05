@@ -13,14 +13,83 @@ namespace Student.Api {
             _dataContext = dataContext;
         }
 
-        /* get user data by user id -- here I only get the data 
-        from student entity I'm not considering getting 
-        the classroom data or teacher data or subject data related to student*/
+
         [HttpGet("GetStudentLDataById")]
         public IActionResult GetStudentList(int id){
-            var studentList = _dataContext.Students.Where(s=>s.StudentId ==id).FirstOrDefault();
+            var studentList = _dataContext.Students.Where(s=>s.StudentId ==id)
+            .Select(s=> new StudentResponseModel{
+                StudentId = s.StudentId,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                ClassroomName = s.Classroom.ClassroomName,
+                Teachers = _dataContext.Teachers
+                .Where(t => t.TeacherClassrooms.Any(tc=>tc.ClassroomId==s.Classroom.ClassroomId))
+                .Select(t => new TeacherResponseModel{
+                    TeacherId = t.TeacherId,
+                    FirstName = t.FirstName,
+                    LastName = t.LastName,
+                    Subjects = _dataContext.TeacherSubjects
+                                .Where(ts=>ts.TeacherId ==t.TeacherId)
+                                .Select(sub => new SubjectResponseModel{
+                                    SubjectId = sub.Subject.SubjectId,
+                                    SubjectName = sub.Subject.SubjectName
+                                })
+                                .ToList()
+                })
+                .ToList()
+            })
+            .FirstOrDefault();
             return Ok(studentList);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpGet("GetStudentList")]
         public async Task<IActionResult> GetStudentList(){
